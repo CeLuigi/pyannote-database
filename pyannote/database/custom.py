@@ -63,12 +63,11 @@ import pkg_resources
 
 from .util import get_annotated
 
-from .loader import load_lst, load_trial
+from .loader import load_lst, load_trial, RTTMLoader
 
 # All "Loader" classes types (eg RTTMLoader, UEMLoader, ...) retrieved from the entry point.
-LOADERS = {
-    ep.name: ep
-    for ep in pkg_resources.iter_entry_points(group="pyannote.database.loader")
+LOADERS = {".rttm": RTTMLoader,
+           ".uem": UEMLoader
 }
 
 
@@ -100,7 +99,7 @@ def Template(template: Text, database_yml: Path) -> Callable[[ProtocolFile], Any
         msg = f"No loader for files with '{path.suffix}' suffix"
         raise ValueError(msg)
 
-    Loader = LOADERS[path.suffix].load()
+    Loader = LOADERS[path.suffix]
 
     def load(current_file: ProtocolFile):
         path = resolve_path(Path(template.format(**abs(current_file))), database_yml)
@@ -256,7 +255,7 @@ def gather_loaders(
                 raise TypeError(msg)
 
             # load custom loader class
-            Loader = LOADERS[path.suffix].load()
+            Loader = LOADERS[path.suffix]
 
             # TODO: As it is right now, every call to "subset_iter" also calls "Loader(path)".
             # However, calling "Loader(path)" might be time consuming so we should probably cache it:
