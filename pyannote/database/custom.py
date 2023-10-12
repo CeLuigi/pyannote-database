@@ -63,7 +63,7 @@ import pkg_resources
 
 from .util import get_annotated
 
-from .loader import load_lst, load_trial, RTTMLoader
+from .loader import load_lst, load_trial, RTTMLoader, UEMLoader
 
 # All "Loader" classes types (eg RTTMLoader, UEMLoader, ...) retrieved from the entry point.
 LOADERS = {".rttm": RTTMLoader,
